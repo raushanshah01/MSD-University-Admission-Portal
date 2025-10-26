@@ -1,0 +1,70 @@
+{
+  "name": "Vignan University Admission System",
+  "short_name": "Vignan Admission",
+  "description": "Online admission portal for Vignan University with seamless application process",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Apply Now",
+      "short_name": "Apply",
+      "description": "Start a new application",
+      "url": "/applicant/apply",
+      "icons": [
+        {
+          "src": "/icons/apply.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "My Applications",
+      "short_name": "Applications",
+      "description": "View your applications",
+      "url": "/applicant/applications",
+      "icons": [
+        {
+          "src": "/icons/applications.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Go to dashboard",
+      "url": "/applicant",
+      "icons": [
+        {
+          "src": "/icons/dashboard.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
