@@ -1391,6 +1391,289 @@ Server (Node.js):
 
 ---
 
+## � Deployment
+
+### Unified Deployment Strategy
+
+This project uses a **unified deployment approach** where:
+1. The client (React/Vite) is built into static files
+2. The built files are copied to the server's `public` folder
+3. The server serves both the API and the client application
+4. You deploy only the `server` folder to production
+
+### Quick Deployment
+
+#### Option 1: Using PowerShell Script (Windows)
+
+```powershell
+.\deploy.ps1
+```
+
+This automated script will:
+- Build the client application
+- Copy the build to server/public
+- Install server dependencies
+- Prepare everything for deployment
+
+#### Option 2: Using npm Scripts (Cross-platform)
+
+From the root directory:
+
+```bash
+# Install all dependencies (first time only)
+npm run install:all
+
+# Build and copy client to server
+npm run build
+
+# Start the production server
+npm run start
+
+# Or do everything in one command
+npm run deploy
+```
+
+#### Option 3: Manual Step-by-Step
+
+```powershell
+# 1. Build the client
+cd client
+npm install
+npm run build
+
+# 2. Copy build to server (Windows PowerShell)
+cd ..
+Remove-Item -Path "server\public" -Recurse -Force -ErrorAction SilentlyContinue
+Copy-Item -Path "client\dist" -Destination "server\public" -Recurse
+
+# 3. Install server dependencies
+cd server
+npm install
+
+# 4. Start the server
+npm start
+```
+
+### Available Deployment Scripts
+
+#### Root Level Scripts (`package.json`)
+
+```bash
+npm run install:client    # Install client dependencies only
+npm run install:server    # Install server dependencies only
+npm run install:all       # Install all dependencies
+npm run build            # Build client and copy to server
+npm run start            # Start production server from server folder
+npm run dev:client       # Run client in development mode
+npm run dev:server       # Run server in development mode
+npm run deploy           # Full deployment: build + start
+```
+
+#### Server Level Scripts (`server/package.json`)
+
+```bash
+npm run build            # Build client and copy to server/public
+npm run build:client     # Build client only
+npm run copy:client      # Copy client build to server/public
+npm start                # Start production server
+npm run dev              # Start development server with nodemon
+npm run seed             # Seed admin user
+```
+
+### Deployment to Cloud Platforms
+
+#### Deploy to Render/Railway/Heroku
+
+1. **Prepare the build:**
+   ```bash
+   npm run build
+   ```
+
+2. **Configure the platform:**
+   - **Root Directory**: `/` (or specify `server` if pushing server only)
+   - **Build Command**: `npm run build` or `cd server && npm install`
+   - **Start Command**: `npm start` or `cd server && npm start`
+
+3. **Set environment variables** (see configuration section)
+
+4. **Deploy** using Git push or platform CLI
+
+#### Deploy to VPS (DigitalOcean/AWS/Azure)
+
+1. **SSH into your server**
+   ```bash
+   ssh user@your-server-ip
+   ```
+
+2. **Clone and setup:**
+   ```bash
+   git clone <repository-url>
+   cd uni_admission_prototype
+   npm run install:all
+   npm run build
+   ```
+
+3. **Use PM2 for process management:**
+   ```bash
+   npm install -g pm2
+   cd server
+   pm2 start index.js --name "uni-admission-portal"
+   pm2 save
+   pm2 startup
+   ```
+
+4. **Configure Nginx reverse proxy** (optional):
+   ```nginx
+   server {
+       listen 80;
+       server_name your-domain.com;
+       
+       location / {
+           proxy_pass http://localhost:5000;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+   ```
+
+### File Structure After Build
+
+```text
+server/
+  ├── public/              # Client build files (generated)
+  │   ├── index.html
+  │   ├── assets/
+  │   │   ├── index-[hash].js
+  │   │   ├── index-[hash].css
+  │   │   └── ...
+  │   └── manifest.json
+  ├── config/
+  ├── middleware/
+  ├── models/
+  ├── routes/
+  ├── utils/
+  ├── index.js            # Main server file
+  ├── package.json
+  └── ...
+```
+
+### Production Environment Checklist
+
+- [ ] Run `npm run build` to create production build
+- [ ] Verify `server/public` folder contains built files
+- [ ] Set all production environment variables
+- [ ] Configure MongoDB Atlas connection string
+- [ ] Set up Cloudinary for file uploads
+- [ ] Configure email service (Gmail app password)
+- [ ] Update CORS settings for production domain
+- [ ] Enable HTTPS/SSL certificate
+- [ ] Set up domain name and DNS
+- [ ] Configure firewall rules
+- [ ] Set up backup strategy for database
+- [ ] Enable monitoring and logging
+- [ ] Test all API endpoints in production
+- [ ] Test file uploads and downloads
+- [ ] Verify email notifications work
+
+### Environment Variables for Production
+
+Ensure these are set in your production environment:
+
+```env
+# Server
+PORT=5000
+NODE_ENV=production
+
+# Database (use MongoDB Atlas)
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/uni_admission
+
+# JWT (generate strong secrets)
+JWT_SECRET=your_production_jwt_secret_very_long_and_random
+JWT_EXPIRE=7d
+
+# Email
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-production-email@gmail.com
+EMAIL_PASS=your-app-specific-password
+EMAIL_FROM=noreply@yourdomain.com
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_production_cloud_name
+CLOUDINARY_API_KEY=your_production_api_key
+CLOUDINARY_API_SECRET=your_production_api_secret
+
+# Frontend URL (for CORS)
+CLIENT_URL=https://yourdomain.com
+```
+
+### Troubleshooting Deployment
+
+**Issue: Client build not found**
+- Solution: Run `npm run build` from root directory
+- Verify `server/public/index.html` exists
+
+**Issue: API routes return 404**
+- Solution: Check that all API routes are prefixed with `/api`
+- Verify the server is serving static files correctly
+
+**Issue: Static assets not loading**
+- Solution: Check Content Security Policy in `server/index.js`
+- Verify asset paths in the build
+
+**Issue: Database connection failed**
+- Solution: Check MongoDB URI in environment variables
+- Ensure IP whitelist includes your server IP (MongoDB Atlas)
+
+### Development vs Production Modes
+
+**Development Mode:**
+- Run client and server separately
+- Client on port 3000 (Vite dev server)
+- Server on port 5000
+- Hot module replacement enabled
+- Vite proxy handles API requests
+
+**Production Mode:**
+- Single server serves everything
+- Client served as static files from `server/public`
+- All requests go through port 5000
+- Optimized and minified builds
+- No proxy needed
+
+### Continuous Deployment
+
+For automated deployments, add this to your CI/CD pipeline (GitHub Actions example):
+
+```yaml
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm run install:all
+      - name: Build
+        run: npm run build
+      - name: Deploy to server
+        run: |
+          # Add your deployment commands here
+          # e.g., rsync, scp, or platform-specific CLI
+```
+
+For more detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+---
+
 ## 📝 License
 
 This project is licensed under the MIT License.

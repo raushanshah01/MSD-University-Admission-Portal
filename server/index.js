@@ -48,6 +48,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 app.use('/exports', express.static(path.join(__dirname, 'exports')));
 
+// Serve static client files (for production)
+app.use(express.static(path.join(__dirname, 'public')));
+
 const PORT = process.env.PORT || 5000;
 const MONGO = process.env.MONGO_URI || 'mongodb://localhost:27017/uni_admission';
 
@@ -76,7 +79,15 @@ app.use('/api/form-progress', formProgressRoutes);
 app.use('/api/admission-cycle', admissionCycleRoutes);
 app.use('/api/smart', smartFeaturesRoutes);
 
-app.get('/', (req,res)=> res.send({ok:true, msg:'University Admission API'}));
+// Serve the client app for all non-API routes (must be after API routes)
+app.get('*', (req, res) => {
+  const indexPath = path.join(__dirname, 'public', 'index.html');
+  if (require('fs').existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.send({ok:true, msg:'University Admission API - Client build not found. Run "npm run build" first.'});
+  }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
