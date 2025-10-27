@@ -9,6 +9,30 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       emptyOutDir: true,
+      // Optimization settings
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true, // Remove console.logs in production
+          drop_debugger: true,
+        },
+      },
+      // Code splitting optimization
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Vendor chunks for better caching
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'mui-vendor': ['@mui/material', '@mui/icons-material'],
+            'chart-vendor': ['chart.js', 'react-chartjs-2'],
+            'utils': ['axios', 'react-toastify'],
+          },
+        },
+      },
+      // Chunk size optimization
+      chunkSizeWarningLimit: 1000,
+      // Enable CSS code splitting
+      cssCodeSplit: true,
     },
     server: {
       port: 3000,
