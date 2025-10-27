@@ -820,40 +820,55 @@ touch .env
 **Server .env Configuration:**
 
 ```env
-# Server
+# ===========================================
+# SERVER CONFIGURATION
+# ===========================================
 PORT=5000
 NODE_ENV=development
 
-# Database
+# ===========================================
+# DATABASE CONFIGURATION
+# ===========================================
 MONGO_URI=mongodb://localhost:27017/uni_admission
 
-# JWT
-JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
-JWT_EXPIRE=7d
-REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
+# ===========================================
+# JWT AUTHENTICATION
+# ===========================================
+# Generate: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+JWT_SECRET=your_jwt_secret_key_here_min_32_chars
+JWT_REFRESH_SECRET=your_refresh_secret_key_here_min_32_chars
 
-# Email (Nodemailer)
+# ===========================================
+# ADMIN CREDENTIALS (for seeding)
+# ===========================================
+ADMIN_EMAIL=admin@vignan.edu
+ADMIN_PASSWORD=Admin@123
+
+# ===========================================
+# EMAIL CONFIGURATION
+# ===========================================
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
-EMAIL_FROM=noreply@vignan.edu
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_gmail_app_password
+REQUIRE_EMAIL_VERIFICATION=false
 
-# Cloudinary (File Uploads)
+# ===========================================
+# CLOUDINARY (Image/File Storage)
+# ===========================================
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
-# Admin Credentials (for seeding)
-ADMIN_EMAIL=admin@vignan.edu
-ADMIN_PASSWORD=Admin@123
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-# Frontend URL (for CORS)
+# ===========================================
+# CLIENT/FRONTEND URL
+# ===========================================
 CLIENT_URL=http://localhost:3000
+
+# ===========================================
+# LOGGING (Optional)
+# ===========================================
+LOG_LEVEL=info
 ```
 
 #### 3. Seed Database
@@ -879,7 +894,11 @@ touch .env
 **Client .env Configuration:**
 
 ```env
-VITE_API_URL=http://localhost:5000/api
+# ===========================================
+# CLIENT ENVIRONMENT VARIABLES
+# ===========================================
+# API Base URL
+REACT_APP_API_URL=http://localhost:5000
 ```
 
 #### 5. Start Development Servers
@@ -908,24 +927,34 @@ npm run dev
 
 #### Server Environment (.env)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | 5000 |
-| `MONGO_URI` | MongoDB connection string | mongodb://localhost:27017/uni_admission |
-| `JWT_SECRET` | Secret for JWT signing | (required) |
-| `JWT_EXPIRE` | Token expiration time | 7d |
-| `EMAIL_HOST` | SMTP host | smtp.gmail.com |
-| `EMAIL_USER` | Email username | (required) |
-| `EMAIL_PASS` | Email password/app password | (required) |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | (optional) |
-| `ADMIN_EMAIL` | Default admin email | <admin@vignan.edu> |
-| `ADMIN_PASSWORD` | Default admin password | Admin@123 |
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `PORT` | Server port | 5000 | No |
+| `NODE_ENV` | Environment mode | development | No |
+| `MONGO_URI` | MongoDB connection string | mongodb://localhost:27017/uni_admission | Yes |
+| `JWT_SECRET` | Secret for JWT signing (min 32 chars) | - | Yes |
+| `JWT_REFRESH_SECRET` | Refresh token secret (min 32 chars) | - | Yes |
+| `ADMIN_EMAIL` | Default admin email | admin@vignan.edu | No |
+| `ADMIN_PASSWORD` | Default admin password | Admin@123 | No |
+| `EMAIL_HOST` | SMTP host | smtp.gmail.com | Yes* |
+| `EMAIL_PORT` | SMTP port | 587 | Yes* |
+| `EMAIL_USER` | Email username | - | Yes* |
+| `EMAIL_PASS` | Email app password | - | Yes* |
+| `REQUIRE_EMAIL_VERIFICATION` | Enable email verification | false | No |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | - | Yes** |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | - | Yes** |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | - | Yes** |
+| `CLIENT_URL` | Frontend URL (for CORS & emails) | http://localhost:3000 | Yes |
+| `LOG_LEVEL` | Logging level | info | No |
+
+**\* Required for email features**  
+**\*\* Required for file upload features**
 
 #### Client Environment (.env)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_URL` | Backend API URL | <http://localhost:5000/api> |
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `REACT_APP_API_URL` | Backend API URL | http://localhost:5000 | No |
 
 ### Theme Configuration
 
