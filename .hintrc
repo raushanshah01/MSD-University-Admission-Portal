@@ -3,15 +3,7 @@
     "development"
   ],
   "hints": {
-    "compat-api/css": [
-      "default",
-      {
-        "ignore": [
-          "user-select",
-          "backdrop-filter"
-        ]
-      }
-    ],
+    "meta-viewport": "off",
     "compat-api/html": [
       "default",
       {
@@ -19,11 +11,6 @@
           "meta[name=theme-color]"
         ]
       }
-    ],
-    "meta-viewport": "off"
-  },
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    ]
   }
 }
