@@ -1,14 +1,19 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
 import theme from './theme';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { setupKeyboardShortcuts } from './utils/shortcuts';
+import { requestNotificationPermission } from './utils/notifications';
 
 // Components (loaded immediately - small size)
 import Navbar from './components/Navbar';
 import SkipLink from './components/SkipLink';
+import OfflineIndicator from './components/OfflineIndicator';
+import KeyboardShortcutsDialog from './components/KeyboardShortcutsDialog';
+import ScrollToTop from './components/ScrollToTop';
 
 // Lazy load pages for better performance
 const Login = lazy(() => import('./pages/Login'));
@@ -67,11 +72,26 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 function AppRoutes() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const isApplicationForm = location.pathname === '/applicant/apply';
+
+  // Setup keyboard shortcuts
+  useEffect(() => {
+    const cleanup = setupKeyboardShortcuts(navigate);
+    return cleanup;
+  }, [navigate]);
+
+  // Request notification permission for logged-in users
+  useEffect(() => {
+    if (user) {
+      requestNotificationPermission();
+    }
+  }, [user]);
 
   return (
     <>
       <SkipLink />
+      <OfflineIndicator />
       {!isApplicationForm && <Navbar />}
       <Box
         component="main"
@@ -146,7 +166,9 @@ function AppRoutes() {
       <Suspense fallback={null}>
         <Chatbot />
         <LanguageSwitcher />
+        <KeyboardShortcutsDialog />
       </Suspense>
+      <ScrollToTop />
     </>
   );
 }
