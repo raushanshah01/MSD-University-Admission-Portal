@@ -85,7 +85,11 @@ app.get('*', (req, res) => {
   if (require('fs').existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.send({ok:true, msg:'University Admission API - Client build not found. Run "npm run build" first.'});
+    res.status(404).json({
+      ok: false, 
+      msg: 'University Admission API - Client build not found. Run "npm run build" in the server folder first.',
+      note: 'API endpoints are available at /api/*'
+    });
   }
 });
 
