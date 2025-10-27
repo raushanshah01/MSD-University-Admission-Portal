@@ -11,6 +11,8 @@ import {
   HelpOutline, Login as LoginIcon, PersonAdd, Logout, AccountCircle, Home,
   Notifications, Circle,
 } from '@mui/icons-material';
+import DarkModeToggle from './DarkModeToggle';
+import NotificationCenter from './NotificationCenter';
 
 const publicPages = [
   { name: 'Home', path: '/home', icon: <Home /> },
@@ -32,29 +34,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [anchorElNotifications, setAnchorElNotifications] = useState(null);
   const [scrolled, setScrolled] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  // Fetch notifications
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-      const interval = setInterval(fetchNotifications, 30000); // Refresh every 30 seconds
-      return () => clearInterval(interval);
-    }
-  }, [user]);
-
-  const fetchNotifications = async () => {
-    try {
-      const response = await notificationAPI.getAll();
-      setNotifications(response.data.slice(0, 5));
-      setUnreadCount(response.data.filter(n => !n.isRead).length);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    }
-  };
 
   // Handle scroll effect
   useEffect(() => {
@@ -71,8 +51,6 @@ export default function Navbar() {
 
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
   const handleCloseUserMenu = () => setAnchorElUser(null);
-  const handleOpenNotifications = (event) => setAnchorElNotifications(event.currentTarget);
-  const handleCloseNotifications = () => setAnchorElNotifications(null);
   const handleLogout = async () => {
     handleCloseUserMenu();
     await logout();
@@ -154,61 +132,11 @@ export default function Navbar() {
           </Box>
           {user ? (
             <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
+              {/* Dark Mode Toggle */}
+              <DarkModeToggle />
+              
               {/* Notifications */}
-              <Tooltip title='Notifications'>
-                <IconButton onClick={handleOpenNotifications} sx={{ color: 'white' }}>
-                  <Badge badgeContent={unreadCount} color='error'>
-                    <Notifications />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: '45px' }}
-                anchorEl={anchorElNotifications}
-                open={Boolean(anchorElNotifications)}
-                onClose={handleCloseNotifications}
-                PaperProps={{
-                  sx: { width: 360, maxHeight: 400 }
-                }}
-              >
-                <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
-                  <Typography variant='subtitle1' fontWeight={700}>Notifications</Typography>
-                  {unreadCount > 0 && (
-                    <Chip label={`${unreadCount} new`} size='small' color='primary' sx={{ mt: 0.5 }} />
-                  )}
-                </Box>
-                {notifications.length === 0 ? (
-                  <Box sx={{ p: 3, textAlign: 'center' }}>
-                    <Typography variant='body2' color='text.secondary'>No notifications</Typography>
-                  </Box>
-                ) : (
-                  notifications.map((notif) => (
-                    <MenuItem
-                      key={notif._id}
-                      sx={{
-                        py: 1.5,
-                        px: 2,
-                        borderLeft: '3px solid',
-                        borderColor: !notif.isRead ? 'primary.main' : 'transparent',
-                        bgcolor: !notif.isRead ? 'action.hover' : 'transparent',
-                        '&:hover': { bgcolor: 'action.selected' },
-                      }}
-                    >
-                      <Box sx={{ width: '100%' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          {!notif.isRead && <Circle sx={{ fontSize: 8, color: 'primary.main' }} />}
-                          <Typography variant='body2' fontWeight={!notif.isRead ? 600 : 400}>
-                            {notif.message}
-                          </Typography>
-                        </Box>
-                        <Typography variant='caption' color='text.secondary'>
-                          {new Date(notif.createdAt).toLocaleString()}
-                        </Typography>
-                      </Box>
-                    </MenuItem>
-                  ))
-                )}
-              </Menu>
+              <NotificationCenter />
 
               {/* User Avatar */}
               <Tooltip title='Open settings'>
