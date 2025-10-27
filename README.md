@@ -903,6 +903,23 @@ REACT_APP_API_URL=http://localhost:5000
 
 #### 5. Start Development Servers
 
+**🎯 Quick Start (Windows - Recommended):**
+
+```powershell
+# Option 1: Full-featured script (checks dependencies, ports, etc.)
+.\start-dev.ps1
+
+# Option 2: Quick start (no checks)
+.\start-quick.ps1
+
+# Stop servers when done
+.\stop-dev.ps1
+```
+
+See [SCRIPTS_README.md](SCRIPTS_README.md) for detailed script documentation.
+
+**Manual Start (Cross-platform):**
+
 **Terminal 1 - Backend:**
 
 ```bash
