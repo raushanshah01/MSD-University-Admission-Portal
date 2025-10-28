@@ -56,10 +56,21 @@ router.post('/register', async (req, res) => {
     // Send verification email
     if (process.env.EMAIL_USER) {
       await sendVerificationEmail(email, name, verificationToken);
-      res.json({ msg: 'Registration successful! Please check your email to verify your account.' });
+      res.status(201).json({ 
+        msg: 'Registration successful! Please check your email to verify your account.',
+        email: user.email,
+        name: user.name,
+        userId: user._id
+      });
     } else {
       // For development without email configured
-      res.json({ msg: 'Registered successfully', verificationToken });
+      res.status(201).json({ 
+        msg: 'Registered successfully', 
+        verificationToken,
+        email: user.email,
+        name: user.name,
+        userId: user._id
+      });
     }
   } catch (err) {
     console.error(err);
@@ -142,9 +153,17 @@ router.post('/login', async (req, res) => {
     res.json({
       token,
       refreshToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isEmailVerified: user.isEmailVerified
+      },
       role: user.role,
       name: user.name,
       email: user.email,
+      userId: user._id,
       isEmailVerified: user.isEmailVerified
     });
   } catch (err) {
@@ -155,6 +174,38 @@ router.post('/login', async (req, res) => {
 
 // refresh token
 router.post('/refresh-token', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken) {
+      return res.status(401).json({ msg: 'Refresh token required' });
+    }
+    
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
+    
+    // Find user and check if refresh token matches
+    const user = await User.findById(decoded.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(403).json({ msg: 'Invalid refresh token' });
+    }
+    
+    // Generate new access token
+    const token = jwt.sign(
+      { id: user._id, role: user.role, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    res.json({ token });
+  } catch (err) {
+    console.error(err);
+    res.status(403).json({ msg: 'Invalid or expired refresh token' });
+  }
+});
+
+// Alias for refresh token (backward compatibility)
+router.post('/refresh', async (req, res) => {
   try {
     const { refreshToken } = req.body;
     

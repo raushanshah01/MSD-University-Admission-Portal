@@ -35,6 +35,34 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get only active announcements (alias for backward compatibility)
+router.get('/active', async (req, res) => {
+  try {
+    const { targetAudience } = req.query;
+    const filter = { 
+      isActive: true,
+      $or: [
+        { expiresAt: { $exists: false } },
+        { expiresAt: { $gt: new Date() } }
+      ]
+    };
+    
+    if (targetAudience) {
+      filter.targetAudience = { $in: ['all', targetAudience] };
+    }
+    
+    const announcements = await Announcement.find(filter)
+      .populate('createdBy', 'name')
+      .sort({ priority: -1, createdAt: -1 })
+      .limit(10);
+    
+    res.json({ announcements, total: announcements.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
 // Get single announcement
 router.get('/:id', async (req, res) => {
   try {

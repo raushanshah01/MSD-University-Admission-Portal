@@ -8,7 +8,63 @@ const Course = require('../models/Course');
 router.get('/', async (req, res) => {
   try {
     const courses = await Course.find({ isActive: true }).sort({ name: 1 });
-    res.json(courses);
+    res.json({ courses, total: courses.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// Get course filters (for advanced search)
+router.get('/filters', async (req, res) => {
+  try {
+    const courses = await Course.find({ isActive: true });
+    
+    // Extract unique values for filters
+    const durations = [...new Set(courses.map(c => c.duration).filter(Boolean))];
+    const eligibilities = [...new Set(courses.map(c => c.eligibility).filter(Boolean))];
+    const departments = [...new Set(courses.map(c => c.department).filter(Boolean))];
+    const feeRanges = [
+      { label: 'Under ₹50,000', min: 0, max: 50000 },
+      { label: '₹50,000 - ₹1,00,000', min: 50000, max: 100000 },
+      { label: '₹1,00,000 - ₹2,00,000', min: 100000, max: 200000 },
+      { label: 'Above ₹2,00,000', min: 200000, max: Infinity }
+    ];
+    
+    res.json({
+      durations: durations.sort(),
+      eligibilities: eligibilities.sort(),
+      departments: departments.sort(),
+      feeRanges
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// Search courses (public)
+router.get('/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+    
+    if (!q || q.trim().length === 0) {
+      return res.json({ courses: [], total: 0 });
+    }
+    
+    const searchRegex = new RegExp(q, 'i');
+    const courses = await Course.find({
+      isActive: true,
+      $or: [
+        { name: searchRegex },
+        { code: searchRegex },
+        { description: searchRegex },
+        { department: searchRegex },
+        { eligibility: searchRegex }
+      ]
+    }).sort({ name: 1 });
+    
+    res.json({ courses, total: courses.length, query: q });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });

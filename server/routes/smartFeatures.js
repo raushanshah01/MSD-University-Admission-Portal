@@ -43,6 +43,35 @@ router.post('/recommend-courses', auth, async (req, res) => {
   }
 });
 
+// Alias for recommendations
+router.post('/recommendations', auth, async (req, res) => {
+  try {
+    const { percentage, previousEducation, category, interests, preferences } = req.body;
+    
+    const userData = preferences || { percentage, previousEducation, category, interests };
+    
+    if (!userData.percentage && !userData.previousEducation) {
+      return res.status(400).json({ msg: 'Please provide percentage and previous education' });
+    }
+    
+    const recommendations = await recommendCourses({
+      percentage: userData.percentage,
+      previousEducation: userData.previousEducation,
+      category: userData.category || 'General',
+      interests: userData.interests || ''
+    });
+    
+    res.json({
+      msg: 'Course recommendations generated',
+      recommendations,
+      count: recommendations.length
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
 // Generate Merit List (Admin)
 router.get('/merit-list', auth, async (req, res) => {
   if (req.user.role !== 'admin') {
