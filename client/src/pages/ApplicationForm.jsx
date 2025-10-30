@@ -80,7 +80,9 @@ export default function ApplicationForm() {
   const loadCourses = async () => {
     try {
       const { data } = await courseAPI.getAll();
-      setCourses(data.filter(c => c.isActive && c.availableSeats > 0));
+      // Backend returns { courses, total }, extract courses array
+      const coursesData = data?.courses || data || [];
+      setCourses(coursesData.filter(c => c.isActive !== false));
     } catch (err) { toast.error('Failed to load courses'); }
   };
 

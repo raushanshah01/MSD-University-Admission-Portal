@@ -164,7 +164,19 @@ export const smartAPI = {
 
 // Error handler helper
 export const handleAPIError = (error) => {
-  const message = error.response?.data?.msg || error.message || 'An error occurred';
+  console.error('API Error:', error);
+  
+  // Network error (no response from server)
+  if (!error.response) {
+    const message = error.message === 'Network Error' 
+      ? 'Unable to connect to server. Please ensure the backend is running on http://localhost:5000'
+      : error.message || 'Network error occurred';
+    toast.error(message);
+    return message;
+  }
+  
+  // Server responded with error
+  const message = error.response?.data?.msg || error.response?.data?.message || error.message || 'An error occurred';
   toast.error(message);
   return message;
 };

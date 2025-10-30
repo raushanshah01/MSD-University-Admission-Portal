@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   Container,
   Box,
@@ -33,6 +34,8 @@ import {
 export default function Home() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const features = [
     {
@@ -150,8 +153,15 @@ export default function Home() {
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Button
-                    component={Link}
-                    to="/courses"
+                    onClick={() => {
+                      if (user && user.role === 'applicant') {
+                        navigate('/applicant/apply');
+                      } else if (user && user.role === 'admin') {
+                        navigate('/admin');
+                      } else {
+                        navigate('/register');
+                      }
+                    }}
                     variant="contained"
                     size="large"
                     sx={{
@@ -166,6 +176,30 @@ export default function Home() {
                         bgcolor: '#f5f5f5',
                         transform: 'translateY(-2px)',
                         boxShadow: 6,
+                      },
+                      transition: 'all 0.3s',
+                    }}
+                  >
+                    {user && user.role === 'applicant' ? 'Apply for Course' : user ? 'View Dashboard' : 'Apply Now'}
+                  </Button>
+                  <Button
+                    component={Link}
+                    to="/courses"
+                    variant="outlined"
+                    size="large"
+                    sx={{
+                      borderColor: 'white',
+                      color: 'white',
+                      px: 4,
+                      py: 1.5,
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      borderWidth: 2,
+                      '&:hover': {
+                        borderColor: 'white',
+                        bgcolor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 2,
+                        transform: 'translateY(-2px)',
                       },
                       transition: 'all 0.3s',
                     }}

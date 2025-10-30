@@ -44,7 +44,7 @@ import {
   LineElement,
   ArcElement,
   Title,
-  Tooltip,
+  Tooltip as ChartTooltip,
   Legend,
   Filler
 } from 'chart.js';
@@ -56,7 +56,7 @@ ChartJS.register(
   LineElement,
   ArcElement,
   Title,
-  Tooltip,
+  ChartTooltip,
   Legend,
   Filler
 );
@@ -134,11 +134,12 @@ function ApplicantDashboard() {
         announcementAPI.getAll()
       ]);
 
-      setApplications(appsRes.data.applications || []);
-      setNotifications(notifRes.data.notifications || []);
-      setAnnouncements(announcRes.data.announcements || []);
+      setApplications(Array.isArray(appsRes.data) ? appsRes.data : appsRes.data.applications || []);
+      setNotifications(Array.isArray(notifRes.data) ? notifRes.data : notifRes.data.notifications || []);
+      setAnnouncements(Array.isArray(announcRes.data) ? announcRes.data : announcRes.data.announcements || []);
     } catch (error) {
-      handleAPIError(error, 'Failed to fetch dashboard data');
+      console.error('Dashboard data fetch error:', error);
+      handleAPIError(error);
     } finally {
       setLoading(false);
     }
@@ -330,11 +331,11 @@ function ApplicantDashboard() {
             <Stack spacing={2}>
               <Button
                 component={Link}
-                to="/applicant/applications"
+                to="/applicant/apply"
                 variant="contained"
                 fullWidth
                 size="large"
-                startIcon={<Description />}
+                startIcon={<School />}
                 endIcon={<ArrowForward />}
                 sx={{
                   bgcolor: 'white',
@@ -342,8 +343,33 @@ function ApplicantDashboard() {
                   py: 1.5,
                   borderRadius: 2,
                   fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   '&:hover': {
                     bgcolor: 'rgba(255,255,255,0.9)',
+                    transform: 'translateX(4px)',
+                    boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+                    transition: 'all 0.3s'
+                  }
+                }}
+              >
+                Apply for Course
+              </Button>
+              <Button
+                component={Link}
+                to="/applicant/applications"
+                variant="outlined"
+                fullWidth
+                size="large"
+                startIcon={<Description />}
+                sx={{
+                  borderColor: 'rgba(255,255,255,0.5)',
+                  color: 'white',
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: 'white',
+                    bgcolor: 'rgba(255,255,255,0.1)',
                     transform: 'translateX(4px)',
                     transition: 'all 0.3s'
                   }

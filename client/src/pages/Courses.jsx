@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { courseAPI } from '../services/api';
 import {
   Container,
@@ -45,6 +47,8 @@ import {
 export default function Courses() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,8 +90,10 @@ export default function Courses() {
     try {
       setLoading(true);
       const response = await courseAPI.getAll();
-      setCourses(response.data);
-      setFilteredCourses(response.data);
+      // Backend returns { courses, total }, extract courses array
+      const coursesData = response.data?.courses || response.data || [];
+      setCourses(coursesData);
+      setFilteredCourses(coursesData);
     } catch (error) {
       console.error('Error fetching courses:', error);
     } finally {
@@ -358,9 +364,17 @@ export default function Courses() {
                         fullWidth
                         size="small"
                         sx={{ fontWeight: 600, textTransform: 'none' }}
-                        href="/login"
+                        onClick={() => {
+                          if (user && user.role === 'applicant') {
+                            navigate('/applicant/apply');
+                          } else if (user && user.role === 'admin') {
+                            navigate('/admin');
+                          } else {
+                            navigate('/login');
+                          }
+                        }}
                       >
-                        Apply Now
+                        {user && user.role === 'applicant' ? 'Apply Now' : user ? 'View Dashboard' : 'Login to Apply'}
                       </Button>
                     </CardActions>
                   </Card>

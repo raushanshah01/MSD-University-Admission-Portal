@@ -37,7 +37,13 @@ app.use(helmet({
   }
 }));
 
-app.use(cors());
+// CORS configuration - Allow frontend origin
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(compression({ 
   level: 6, // Compression level (0-9)
   threshold: 1024, // Only compress responses larger than 1KB

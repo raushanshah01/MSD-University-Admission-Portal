@@ -22,6 +22,7 @@ const publicPages = [
 
 const applicantPages = [
   { name: 'Dashboard', path: '/applicant', icon: <Dashboard /> },
+  { name: 'Apply for Course', path: '/applicant/apply', icon: <Assignment /> },
   { name: 'My Applications', path: '/applicant/applications', icon: <Article /> },
 ];
 

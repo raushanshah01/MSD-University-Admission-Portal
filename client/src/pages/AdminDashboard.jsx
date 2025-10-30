@@ -143,6 +143,10 @@ const StatCard = ({ title, value, icon: Icon, color = 'primary' }) => {
 };
 
 export default function AdminDashboard() {
+  // Helper function to get user/userId fields (API inconsistency fix)
+  const getUser = (app) => app.user || app.userId;
+  const getCourse = (app) => app.course || app.courseId;
+  
   // State management
   const [applications, setApplications] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -201,11 +205,13 @@ export default function AdminDashboard() {
         applicationAPI.getAll(),
         courseAPI.getAll()
       ]);
-      setApplications(appsRes.data || []);
-      setCourses(coursesRes.data || []);
+      // Applications endpoint returns array directly
+      setApplications(Array.isArray(appsRes.data) ? appsRes.data : []);
+      // Courses endpoint returns { courses, total }
+      setCourses(coursesRes.data?.courses || coursesRes.data || []);
     } catch (error) {
+      console.error('Dashboard data fetch error:', error);
       toast.error('Failed to load dashboard data');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -236,9 +242,9 @@ export default function AdminDashboard() {
     const headers = ['Application No', 'Applicant', 'Email', 'Course', 'Status', 'Date'];
     const csvData = filteredAndSortedApplications.map(app => [
       app.applicationNumber || '',
-      app.userId?.name || '',
-      app.userId?.email || '',
-      app.courseId?.name || '',
+      app.user?.name || '',
+      app.user?.email || '',
+      app.course || '',
       app.status || '',
       new Date(app.createdAt).toLocaleDateString()
     ]);
@@ -392,14 +398,16 @@ export default function AdminDashboard() {
 
   // NEW: Print application details
   const handlePrintApplication = (app) => {
+    const user = getUser(app);
+    const course = getCourse(app);
     const printWindow = window.open('', '', 'height=600,width=800');
     printWindow.document.write('<html><head><title>Application Details</title>');
     printWindow.document.write('<style>body{font-family:Arial;padding:20px;}h1{color:#2c3e50;}</style>');
     printWindow.document.write('</head><body>');
     printWindow.document.write(`<h1>Application Details</h1>`);
-    printWindow.document.write(`<p><strong>Applicant:</strong> ${app.userId?.name || 'N/A'}</p>`);
-    printWindow.document.write(`<p><strong>Email:</strong> ${app.userId?.email || 'N/A'}</p>`);
-    printWindow.document.write(`<p><strong>Course:</strong> ${app.courseId?.name || 'N/A'}</p>`);
+    printWindow.document.write(`<p><strong>Applicant:</strong> ${user?.name || 'N/A'}</p>`);
+    printWindow.document.write(`<p><strong>Email:</strong> ${user?.email || 'N/A'}</p>`);
+    printWindow.document.write(`<p><strong>Course:</strong> ${typeof course === 'string' ? course : course?.name || 'N/A'}</p>`);
     printWindow.document.write(`<p><strong>Status:</strong> ${app.status || 'N/A'}</p>`);
     printWindow.document.write(`<p><strong>Date:</strong> ${new Date(app.createdAt).toLocaleString()}</p>`);
     printWindow.document.write('</body></html>');
@@ -430,14 +438,17 @@ export default function AdminDashboard() {
 
   // NEW: Advanced filtering
   const filteredApplications = applications.filter(app => {
+    const user = getUser(app);
+    const course = getCourse(app);
+    
     const matchesSearch = 
-      app.userId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.userId?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.courseId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (typeof course === 'string' ? course : course?.name)?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.applicationNumber?.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesStatus = filterStatus === 'all' || app.status === filterStatus;
-    const matchesCourse = filterCourse === 'all' || app.courseId?._id === filterCourse;
+    const matchesCourse = filterCourse === 'all' || (typeof course === 'string' ? course === filterCourse : course?._id === filterCourse);
     
     const appDate = new Date(app.createdAt);
     const matchesDateFrom = !filterDateFrom || appDate >= new Date(filterDateFrom);
@@ -452,12 +463,14 @@ export default function AdminDashboard() {
     
     switch(orderBy) {
       case 'name':
-        aValue = a.userId?.name || '';
-        bValue = b.userId?.name || '';
+        aValue = getUser(a)?.name || '';
+        bValue = getUser(b)?.name || '';
         break;
       case 'course':
-        aValue = a.courseId?.name || '';
-        bValue = b.courseId?.name || '';
+        const aCourse = getCourse(a);
+        const bCourse = getCourse(b);
+        aValue = typeof aCourse === 'string' ? aCourse : aCourse?.name || '';
+        bValue = typeof bCourse === 'string' ? bCourse : bCourse?.name || '';
         break;
       case 'status':
         aValue = a.status || '';
@@ -822,13 +835,14 @@ export default function AdminDashboard() {
                 {recentActivity.length > 0 ? (
                   recentActivity.slice(0, 5).map((app, index) => {
                     const lastStatus = app.statusHistory[app.statusHistory.length - 1];
+                    const user = getUser(app);
                     return (
                       <ListItem key={app._id || index}>
                         <ListItemAvatar>
-                          <Avatar>{(app.userId?.name || 'U')[0]}</Avatar>
+                          <Avatar>{(user?.name || 'U')[0]}</Avatar>
                         </ListItemAvatar>
                         <ListItemText
-                          primary={app.userId?.name || 'Unknown'}
+                          primary={user?.name || 'Unknown'}
                           secondary={`${lastStatus?.status || app.status} • ${new Date(lastStatus?.updatedAt || app.updatedAt).toLocaleString()}`}
                           secondaryTypographyProps={{ sx: { fontSize: '0.7rem' } }}
                         />
@@ -932,7 +946,7 @@ export default function AdminDashboard() {
           <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
             <Autocomplete
               freeSolo
-              options={applications.map(app => app.userId?.name || '')}
+              options={applications.map(app => getUser(app)?.name || '')}
               value={searchQuery}
               onChange={(e, newValue) => setSearchQuery(newValue || '')}
               onInputChange={(e, newValue) => setSearchQuery(newValue || '')}
@@ -1089,14 +1103,14 @@ export default function AdminDashboard() {
                       <TableCell>
                         <Box>
                           <Typography variant="body2" fontWeight={600}>
-                            {app.userId?.name || 'Unknown'}
+                            {getUser(app)?.name || 'Unknown'}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {app.userId?.email || ''}
+                            {getUser(app)?.email || ''}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>{app.courseId?.name || '-'}</TableCell>
+                      <TableCell>{typeof getCourse(app) === 'string' ? getCourse(app) : getCourse(app)?.name || '-'}</TableCell>
                       <TableCell>
                         <Typography variant="body2">
                           {new Date(app.createdAt).toLocaleDateString()}
@@ -1269,13 +1283,15 @@ export default function AdminDashboard() {
             <List>
               {recentActivity.map((app, index) => {
                 const lastStatus = app.statusHistory[app.statusHistory.length - 1];
+                const user = getUser(app);
+                const course = getCourse(app);
                 return (
                   <ListItem key={app._id || index} divider={index < recentActivity.length - 1}>
                     <ListItemAvatar>
-                      <Avatar>{(app.userId?.name || 'U')[0]}</Avatar>
+                      <Avatar>{(user?.name || 'U')[0]}</Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary={`${app.userId?.name || 'Unknown'} - ${app.courseId?.name || 'Course'}`}
+                      primary={`${user?.name || 'Unknown'} - ${typeof course === 'string' ? course : course?.name || 'Course'}`}
                       secondary={
                         <Typography variant="caption" color="text.secondary">
                           Status changed to {lastStatus?.status || app.status} • {new Date(lastStatus?.updatedAt || app.updatedAt).toLocaleString()}
@@ -1334,10 +1350,10 @@ export default function AdminDashboard() {
             {selectedTimeline && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" gutterBottom>
-                  <strong>Applicant:</strong> {selectedTimeline.userId?.name || 'Unknown'}
+                  <strong>Applicant:</strong> {getUser(selectedTimeline)?.name || 'Unknown'}
                 </Typography>
                 <Typography variant="subtitle2" gutterBottom>
-                  <strong>Course:</strong> {selectedTimeline.courseId?.name || '-'}
+                  <strong>Course:</strong> {typeof getCourse(selectedTimeline) === 'string' ? getCourse(selectedTimeline) : getCourse(selectedTimeline)?.name || '-'}
                 </Typography>
                 <Typography variant="subtitle2" gutterBottom sx={{ mb: 3 }}>
                   <strong>Application No:</strong> {selectedTimeline.applicationNumber || '-'}
@@ -1398,7 +1414,7 @@ export default function AdminDashboard() {
             {selectedAppForNote && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle2" gutterBottom>
-                  <strong>Application:</strong> {selectedAppForNote.userId?.name || 'Unknown'} - {selectedAppForNote.courseId?.name || 'N/A'}
+                  <strong>Application:</strong> {getUser(selectedAppForNote)?.name || 'Unknown'} - {typeof getCourse(selectedAppForNote) === 'string' ? getCourse(selectedAppForNote) : getCourse(selectedAppForNote)?.name || 'N/A'}
                 </Typography>
                 
                 <Divider sx={{ my: 2 }} />
@@ -1463,7 +1479,7 @@ export default function AdminDashboard() {
                       const app = applications.find(a => a._id === appId);
                       return (
                         <TableCell key={appId} align="center">
-                          <strong>{app?.userId?.name || 'Unknown'}</strong>
+                          <strong>{getUser(app)?.name || 'Unknown'}</strong>
                         </TableCell>
                       );
                     })}
@@ -1474,14 +1490,15 @@ export default function AdminDashboard() {
                     <TableCell><strong>Email</strong></TableCell>
                     {selectedForCompare.map(appId => {
                       const app = applications.find(a => a._id === appId);
-                      return <TableCell key={appId} align="center">{app?.userId?.email || '-'}</TableCell>;
+                      return <TableCell key={appId} align="center">{getUser(app)?.email || '-'}</TableCell>;
                     })}
                   </TableRow>
                   <TableRow>
                     <TableCell><strong>Course</strong></TableCell>
                     {selectedForCompare.map(appId => {
                       const app = applications.find(a => a._id === appId);
-                      return <TableCell key={appId} align="center">{app?.courseId?.name || '-'}</TableCell>;
+                      const course = getCourse(app);
+                      return <TableCell key={appId} align="center">{typeof course === 'string' ? course : course?.name || '-'}</TableCell>;
                     })}
                   </TableRow>
                   <TableRow>
@@ -1608,7 +1625,10 @@ export default function AdminDashboard() {
                   </Typography>
                   <List>
                     {courses.slice(0, 5).map(course => {
-                      const count = applications.filter(app => app.courseId?._id === course._id).length;
+                      const count = applications.filter(app => {
+                        const appCourse = getCourse(app);
+                        return typeof appCourse === 'string' ? appCourse === course._id : appCourse?._id === course._id;
+                      }).length;
                       const percentage = ((count / applications.length) * 100).toFixed(1);
                       return (
                         <ListItem key={course._id}>

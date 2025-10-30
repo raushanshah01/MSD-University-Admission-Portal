@@ -148,20 +148,22 @@ async function runTests() {
       'post',
       '/applications',
       {
-        courseId: courseId,
-        personalInfo: {
+        name: {
           firstName: 'Test',
-          lastName: 'User',
-          dateOfBirth: '2000-01-01',
-          gender: 'male',
-          phone: '1234567890',
-          address: 'Test Address'
+          middleName: '',
+          lastName: 'User'
         },
-        academicInfo: {
-          highSchool: 'Test School',
-          percentage: 85,
-          passedYear: 2020
-        }
+        dob: '2000-01-01',
+        gender: 'male',
+        category: 'General',
+        course: courseId,
+        phone: '1234567890',
+        email: registerData.email,
+        address: 'Test Address, City, State, ZIP',
+        guardianName: 'Parent Name',
+        guardianPhone: '9876543210',
+        previousEducation: 'High School',
+        percentage: 85
       },
       true,
       201
@@ -170,13 +172,13 @@ async function runTests() {
     testApplicationId = appData?.application?._id || appData?._id;
   }
 
-  await testEndpoint('GET /applications', 'get', '/applications', null, true);
+  await testEndpoint('GET /applications', 'get', '/applications', null, true, 403); // Admin only
   
   if (testApplicationId) {
     await testEndpoint(`GET /applications/${testApplicationId}`, 'get', `/applications/${testApplicationId}`, null, true);
   }
 
-  await testEndpoint('GET /applications/stats', 'get', '/applications/stats', null, true);
+  await testEndpoint('GET /applications/stats', 'get', '/applications/stats', null, true, 403); // Admin only
   
   console.log('');
 
@@ -272,7 +274,11 @@ async function runTests() {
     'POST /smart/recommendations',
     'post',
     '/smart/recommendations',
-    { preferences: { field: 'Computer Science' } },
+    { 
+      percentage: 85,
+      previousEducation: 'High School',
+      preferredField: 'Computer Science'
+    },
     true
   );
   
