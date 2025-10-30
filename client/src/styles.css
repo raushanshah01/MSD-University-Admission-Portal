@@ -1089,8 +1089,6 @@ button:active:not(:disabled) {
   overflow-y: auto;
   padding: var(--spacing-lg);
   background: var(--gray-50);
-  scrollbar-width: thin;
-  scrollbar-color: var(--gray-300) transparent;
 }
 
 .chatbot-messages::-webkit-scrollbar {
@@ -1209,8 +1207,6 @@ button:active:not(:disabled) {
   overflow-y: auto;
   padding: var(--spacing-lg);
   background: var(--gray-50);
-  scrollbar-width: thin;
-  scrollbar-color: var(--gray-300) transparent;
 }
 
 .chatbot-window-embedded .chatbot-messages::-webkit-scrollbar {
