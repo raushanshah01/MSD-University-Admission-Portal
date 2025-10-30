@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './styles/professional-enhancements.css';
 import { CssBaseline, Box, CircularProgress } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -29,23 +30,60 @@ const Courses = lazy(() => import('./pages/Courses'));
 const Help = lazy(() => import('./pages/Help'));
 const Home = lazy(() => import('./pages/Home'));
 const Profile = lazy(() => import('./pages/Profile'));
-const Chatbot = lazy(() => import('./components/Chatbot'));
 const LanguageSwitcher = lazy(() => import('./components/LanguageSwitcher'));
 
-// Loading Component
+// Enhanced Loading Component
 const LoadingFallback = () => (
   <Box
+    className="fade-in"
     sx={{
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
       flexDirection: 'column',
-      gap: 2,
+      gap: 3,
+      background: 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)',
     }}
   >
-    <CircularProgress size={48} />
-    <Box sx={{ fontSize: '0.875rem', color: 'text.secondary' }}>Loading...</Box>
+    <Box sx={{ position: 'relative' }}>
+      <CircularProgress 
+        size={56} 
+        thickness={4}
+        sx={{
+          color: 'primary.main',
+          animationDuration: '1s',
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <Box
+          sx={{
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #2c3e50 0%, #546e7a 100%)',
+          }}
+        />
+      </Box>
+    </Box>
+    <Box 
+      sx={{ 
+        fontSize: '0.9375rem', 
+        color: 'text.secondary',
+        fontWeight: 500,
+        letterSpacing: '0.5px',
+      }}
+      className="pulse"
+    >
+      Loading your content...
+    </Box>
   </Box>
 );
 
@@ -96,7 +134,10 @@ function AppRoutes() {
       <Box
         component="main"
         id="main-content"
-        sx={{ minHeight: '100vh' }}
+        sx={{ 
+          minHeight: '100vh',
+          paddingTop: !isApplicationForm ? '64px' : '0', // Add padding when navbar is shown
+        }}
         role="main"
         aria-label="Main content"
       >
@@ -164,7 +205,6 @@ function AppRoutes() {
 
       {/* Global Components */}
       <Suspense fallback={null}>
-        <Chatbot />
         <LanguageSwitcher />
         <KeyboardShortcutsDialog />
       </Suspense>
@@ -182,7 +222,7 @@ function App() {
           <AppRoutes />
           <ToastContainer
             position="top-right"
-            autoClose={3000}
+            autoClose={4000}
             hideProgressBar={false}
             newestOnTop
             closeOnClick
@@ -190,6 +230,13 @@ function App() {
             pauseOnFocusLoss
             draggable
             pauseOnHover
+            theme="light"
+            limit={3}
+            transition:Slide
+            toastClassName="slide-in-right"
+            style={{
+              zIndex: 9999,
+            }}
           />
         </BrowserRouter>
       </AuthProvider>

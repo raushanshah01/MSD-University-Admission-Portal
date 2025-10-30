@@ -793,7 +793,7 @@ export default function ApplicationForm() {
           <Box sx={{ mb: 4 }}>
             <School sx={{ fontSize: 56, mb: 2 }} />
             <Typography variant="h4" fontWeight={700} gutterBottom>
-              Vignan University
+              EduVoyage
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.9 }}>
               Empowering Future Leaders

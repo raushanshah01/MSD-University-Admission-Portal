@@ -15,6 +15,7 @@ import {
   Paper,
   useTheme,
   useMediaQuery,
+  Divider,
 } from '@mui/material';
 import {
   HelpOutline,
@@ -27,7 +28,9 @@ import {
   School,
   Assignment,
   Payment,
+  Chat,
 } from '@mui/icons-material';
+import Chatbot from '../components/Chatbot';
 
 const faqs = [
   {
@@ -57,8 +60,8 @@ const faqs = [
     icon: <School />,
     questions: [
       {
-        q: 'What courses does Vignan University offer?',
-        a: 'Vignan University offers a wide range of undergraduate, postgraduate, and doctoral programs in Engineering, Management, Science, and Humanities. Visit the "Courses" page to see the complete list.',
+        q: 'What courses does EduVoyage offer?',
+        a: 'EduVoyage offers a wide range of undergraduate, postgraduate, and doctoral programs in Engineering, Management, Science, and Humanities. Visit the "Courses" page to see the complete list.',
       },
       {
         q: 'What are the eligibility criteria?',
@@ -179,6 +182,38 @@ export default function Help() {
       </Box>
 
       <Container maxWidth="lg" sx={{ pb: { xs: 4, sm: 6 } }}>
+        {/* AI Chatbot Section */}
+        <Paper
+          sx={{
+            p: { xs: 3, sm: 4 },
+            mb: 4,
+            border: '1px solid #e0e0e0',
+            borderRadius: 2,
+            boxShadow: 0,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Chat sx={{ fontSize: 40 }} />
+            <Box>
+              <Typography variant="h5" fontWeight={700} gutterBottom>
+                AI Admission Assistant
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.95 }}>
+                Get instant answers to your questions using our intelligent chatbot
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
+
+        {/* Chatbot Component */}
+        <Box sx={{ mb: 5 }}>
+          <Chatbot />
+        </Box>
+
+        <Divider sx={{ mb: 5 }} />
+
         <Grid container spacing={{ xs: 3, sm: 4 }}>
           {/* FAQ Section */}
           <Grid item xs={12} lg={7}>
@@ -369,9 +404,9 @@ export default function Help() {
                         Address
                       </Typography>
                       <Typography variant="body1" fontWeight={500}>
-                        Vignan University<br />
-                        Vadlamudi, Guntur<br />
-                        Andhra Pradesh - 522213
+                        EduVoyage Portal<br />
+                        Online Education Platform<br />
+                        Serving Students Worldwide
                       </Typography>
                     </Box>
                   </Box>

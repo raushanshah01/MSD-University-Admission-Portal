@@ -11,6 +11,16 @@
           "meta[name=theme-color]"
         ]
       }
+    ],
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "backdrop-filter",
+          "scrollbar-color",
+          "scrollbar-width"
+        ]
+      }
     ]
   }
 }

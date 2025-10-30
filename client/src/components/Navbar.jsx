@@ -9,9 +9,8 @@ import {
 import {
   School, Dashboard, Assignment, Article,
   HelpOutline, Login as LoginIcon, PersonAdd, Logout, AccountCircle, Home,
-  Notifications, Circle,
+  Notifications, Circle, Explore,
 } from '@mui/icons-material';
-import DarkModeToggle from './DarkModeToggle';
 import NotificationCenter from './NotificationCenter';
 
 const publicPages = [
@@ -69,7 +68,7 @@ export default function Navbar() {
 
   return (
     <AppBar 
-      position='sticky' 
+      position='fixed' 
       elevation={scrolled ? 4 : 0} 
       sx={{ 
         bgcolor: scrolled ? 'rgba(44, 62, 80, 0.98)' : 'primary.main', 
@@ -78,12 +77,34 @@ export default function Navbar() {
         borderColor: scrolled ? 'rgba(255, 255, 255, 0.1)' : 'divider',
         transition: 'all 0.3s ease-in-out',
         boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.1)' : 'none',
+        zIndex: 1200,
       }}
     >
       <Container maxWidth='xl'>
         <Toolbar disableGutters sx={{ py: scrolled ? 0.5 : 1, transition: 'padding 0.3s ease-in-out' }}>
           {/* Logo and Brand */}
-          <School sx={{ mr: 1, fontSize: scrolled ? 28 : 32, transition: 'font-size 0.3s ease-in-out' }} />
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            mr: 1,
+            position: 'relative',
+          }}>
+            <School sx={{ 
+              fontSize: scrolled ? 28 : 32, 
+              transition: 'font-size 0.3s ease-in-out',
+              position: 'relative',
+              zIndex: 1,
+            }} />
+            <Explore sx={{ 
+              fontSize: scrolled ? 18 : 22, 
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              transition: 'all 0.3s ease-in-out',
+              opacity: 0.3,
+            }} />
+          </Box>
           <Typography 
             variant='h6' 
             noWrap 
@@ -96,9 +117,14 @@ export default function Navbar() {
               textDecoration: 'none',
               fontSize: scrolled ? '1.15rem' : '1.25rem',
               transition: 'font-size 0.3s ease-in-out',
+              background: 'linear-gradient(135deg, #fff 0%, #e3f2fd 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              letterSpacing: '0.5px',
             }}
           >
-            Vignan University
+            EduVoyage
           </Typography>
 
           {/* Desktop Navigation - Always visible */}
@@ -133,9 +159,6 @@ export default function Navbar() {
           </Box>
           {user ? (
             <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
-              {/* Dark Mode Toggle */}
-              <DarkModeToggle />
-              
               {/* Notifications */}
               <NotificationCenter />
 

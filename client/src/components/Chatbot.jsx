@@ -72,85 +72,69 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="chatbot-container">
-      {isOpen && (
-        <div className="chatbot-window">
-          <div className="chatbot-header">
-            <div>
-              <strong>Admission Assistant</strong>
-              <div style={{ fontSize: '12px', opacity: 0.9 }}>Ask me anything!</div>
-            </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
-            >
-              <FaTimes />
-            </button>
-          </div>
-
-          <div className="chatbot-messages">
-            {messages.map((msg, index) => (
-              <div key={index}>
-                <div className={`chatbot-message ${msg.type}`}>
-                  {msg.text}
-                </div>
-                {msg.suggestions && msg.suggestions.length > 0 && (
-                  <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {msg.suggestions.map((sug, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleSuggestionClick(sug)}
-                        style={{
-                          padding: '6px 12px',
-                          fontSize: '12px',
-                          background: '#f7fafc',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '12px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        {sug}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            {loading && (
-              <div className="chatbot-message bot">
-                <div className="spinner" style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          <div className="chatbot-input">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your question..."
-              disabled={loading}
-            />
-            <button
-              onClick={handleSend}
-              disabled={loading || !input.trim()}
-              className="btn-primary"
-            >
-              <FaPaperPlane />
-            </button>
+    <div className="chatbot-embedded">
+      <div className="chatbot-window-embedded">
+        <div className="chatbot-header">
+          <div>
+            <strong>Admission Assistant</strong>
+            <div style={{ fontSize: '12px', opacity: 0.9 }}>Ask me anything about admissions!</div>
           </div>
         </div>
-      )}
 
-      <button
-        className="chatbot-button"
-        onClick={() => setIsOpen(!isOpen)}
-        title="Chat with us"
-      >
-        {isOpen ? <FaTimes /> : <FaComments />}
-      </button>
+        <div className="chatbot-messages">
+          {messages.map((msg, index) => (
+            <div key={index}>
+              <div className={`chatbot-message ${msg.type}`}>
+                {msg.text}
+              </div>
+              {msg.suggestions && msg.suggestions.length > 0 && (
+                <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {msg.suggestions.map((sug, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSuggestionClick(sug)}
+                      style={{
+                        padding: '6px 12px',
+                        fontSize: '12px',
+                        background: '#f7fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {sug}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+          {loading && (
+            <div className="chatbot-message bot">
+              <div className="spinner" style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="chatbot-input">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Type your question..."
+            disabled={loading}
+          />
+          <button
+            onClick={handleSend}
+            disabled={loading || !input.trim()}
+            className="btn-primary"
+          >
+            <FaPaperPlane />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

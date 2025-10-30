@@ -76,7 +76,7 @@ export default function Home() {
       name: 'Rahul Sharma',
       role: 'B.Tech Graduate',
       rating: 5,
-      text: 'Vignan University provided me with excellent opportunities and a strong foundation for my career. The faculty and facilities are top-notch.',
+      text: 'EduVoyage provided me with excellent opportunities and a strong foundation for my career. The faculty and facilities are top-notch.',
       avatar: 'R',
     },
     {
@@ -136,7 +136,7 @@ export default function Home() {
                     lineHeight: 1.2,
                   }}
                 >
-                  Welcome to Vignan University
+                  Welcome to EduVoyage
                 </Typography>
                 <Typography
                   variant="h6"
@@ -302,7 +302,7 @@ export default function Home() {
                 mt: 1,
               }}
             >
-              Why Choose Vignan University?
+              Why Choose EduVoyage?
             </Typography>
             <Typography
               variant="body1"
@@ -530,7 +530,7 @@ export default function Home() {
               gutterBottom
               sx={{ fontSize: { xs: '1.75rem', sm: '2.25rem' } }}
             >
-              Discover Your Future at Vignan University
+              Discover Your Future at EduVoyage
             </Typography>
             <Typography
               variant="h6"

@@ -44,15 +44,20 @@ const KeyboardShortcutsDialog = () => {
         onClick={() => setOpen(true)}
         sx={{
           position: 'fixed',
-          bottom: 80,
-          right: 20,
+          bottom: 24,
+          right: 24,
           bgcolor: 'primary.main',
           color: 'white',
-          boxShadow: 3,
+          width: 56,
+          height: 56,
+          boxShadow: '0 4px 12px rgba(44, 62, 80, 0.25)',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
             bgcolor: 'primary.dark',
+            transform: 'scale(1.05) translateY(-2px)',
+            boxShadow: '0 8px 20px rgba(44, 62, 80, 0.35)',
           },
-          zIndex: 1000,
+          zIndex: 1030,
         }}
         aria-label="Keyboard shortcuts"
         title="Keyboard Shortcuts (Shift + ?)"

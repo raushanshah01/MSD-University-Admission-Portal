@@ -118,7 +118,7 @@ export default function Register() {
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '500px' }}>
           <School sx={{ fontSize: 80, mb: 3 }} />
           <Typography variant="h3" fontWeight={700} gutterBottom>
-            Join Vignan University
+            Join EduVoyage
           </Typography>
           <Typography variant="h6" sx={{ mb: 4, opacity: 0.95 }}>
             Start Your Academic Journey Today
@@ -152,7 +152,7 @@ export default function Register() {
               Create Account
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Join Vignan University admission portal
+              Join EduVoyage admission portal
             </Typography>
           </Box>
 

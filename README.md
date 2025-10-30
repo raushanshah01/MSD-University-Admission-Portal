@@ -1,4 +1,4 @@
-# 🎓 Vignan University - Online Admission System
+# 🎓 EduVoyage - Advanced University Admission Portal
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Status](https://img.shields.io/badge/status-production--ready-success)
@@ -1888,7 +1888,7 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-**Vignan University Admission System**  
+**EduVoyage Admission Portal**  
 Developed as a comprehensive MERN stack project
 
 ---
@@ -1994,6 +1994,6 @@ For support and queries:
 
 ## 📌 Credits
 
-Made with ❤️ for Vignan University
+Made with ❤️ by EduVoyage Team
 
 Last Updated: January 2025

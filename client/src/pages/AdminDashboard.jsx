@@ -611,7 +611,7 @@ export default function AdminDashboard() {
               Admin Portal
             </Typography>
             <Typography variant="h6" sx={{ opacity: 0.95, fontWeight: 400 }}>
-              Vignan University
+              EduVoyage
             </Typography>
             <Chip 
               label="Administrator" 

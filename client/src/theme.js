@@ -1,15 +1,16 @@
 import { createTheme } from '@mui/material/styles';
 
+// Professional Color Palette - Clean & Modern
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2c3e50',      // Dark slate gray
+      main: '#2c3e50',      // Professional dark slate
       light: '#34495e',
       dark: '#1a252f',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#546e7a',      // Blue gray
+      main: '#546e7a',      // Sophisticated blue gray
       light: '#78909c',
       dark: '#37474f',
       contrastText: '#ffffff',

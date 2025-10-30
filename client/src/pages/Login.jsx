@@ -85,7 +85,7 @@ export default function Login() {
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '500px' }}>
           <School sx={{ fontSize: 80, mb: 3 }} />
           <Typography variant="h3" fontWeight={700} gutterBottom>
-            Vignan University
+            EduVoyage
           </Typography>
           <Typography variant="h6" sx={{ mb: 4, opacity: 0.95 }}>
             Begin Your Journey to Excellence
@@ -119,7 +119,7 @@ export default function Login() {
               Welcome Back
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Login to your Vignan University account
+              Login to your EduVoyage account
             </Typography>
           </Box>
 

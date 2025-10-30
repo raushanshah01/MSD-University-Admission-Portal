@@ -1,7 +1,7 @@
 {
-  "name": "Vignan University Admission System",
-  "short_name": "Vignan Admission",
-  "description": "Online admission portal for Vignan University with seamless application process",
+  "name": "EduVoyage - Advanced Admission Portal",
+  "short_name": "EduVoyage",
+  "description": "Modern online admission portal with AI-powered features and seamless application process",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fafafa",
