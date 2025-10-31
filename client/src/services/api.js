@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 // Use environment variable for backend URL, or fallback to same domain in production
-const API_BASE = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+const API_BASE = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'https://msd-university-admission-portal-wd7d.onrender.com');
 const API_URL = `${API_BASE}/api`;
 
 // Create axios instance
@@ -169,7 +169,7 @@ export const handleAPIError = (error) => {
   // Network error (no response from server)
   if (!error.response) {
     const message = error.message === 'Network Error' 
-      ? 'Unable to connect to server. Please ensure the backend is running on http://localhost:5000'
+      ? 'Unable to connect to server. Please ensure the backend is running on https://msd-university-admission-portal-wd7d.onrender.com'
       : error.message || 'Network error occurred';
     toast.error(message);
     return message;
