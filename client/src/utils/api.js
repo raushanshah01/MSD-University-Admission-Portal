@@ -1,8 +1,6 @@
 
 // Use environment variable for backend URL, or fallback to same domain in production
-const API_BASE =
-  process.env.REACT_APP_API_URL ||
-  'https://msd-university-admission-portal-wd7d.onrender.com';
+const API_BASE ='https://msd-university-admission-portal-wd7d.onrender.com';
 
 const API_URL = `${API_BASE}/api`;
 
