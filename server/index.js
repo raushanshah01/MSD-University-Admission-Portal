@@ -39,7 +39,7 @@ app.use(helmet({
 
 // CORS configuration - Allow frontend origin
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'],
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173','https://msd-university-admission-portal-one.vercel.app'],
   credentials: true,
   optionsSuccessStatus: 200
 };
