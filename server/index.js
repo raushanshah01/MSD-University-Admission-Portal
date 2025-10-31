@@ -38,12 +38,24 @@ app.use(helmet({
 }));
 
 // CORS configuration - Allow frontend origin
+// CORS configuration - Allow frontend origins
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'],
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+    'https://msd-university-admission-portal-one.vercel.app', // ✅ Your frontend (Vercel)
+    'https://msd-university-admission-portal-wd7d.onrender.com' // ✅ Your backend (Render, for internal API calls if any)
+  ],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
 };
+
 app.use(cors(corsOptions));
+
 app.use(compression({ 
   level: 6, // Compression level (0-9)
   threshold: 1024, // Only compress responses larger than 1KB
