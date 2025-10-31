@@ -45,7 +45,7 @@ const corsOptions = {
     'http://localhost:5173',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:5173',
-    'https://msd-university-admission-portal-14i.vercel.app', // ✅ Your frontend (Vercel)
+    'https://msd-university-admission-portal-itz.vercel.app', // ✅ Your frontend (Vercel)
     'https://msd-university-admission-portal-wd7d.onrender.com' // ✅ Your backend (Render, for internal API calls if any)
   ],
   credentials: true,
