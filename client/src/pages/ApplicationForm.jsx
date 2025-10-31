@@ -83,8 +83,14 @@ export default function ApplicationForm() {
       // Backend returns { courses, total }, extract courses array
       const coursesData = data?.courses || data || [];
       setCourses(coursesData.filter(c => c.isActive !== false));
-    } catch (err) { toast.error('Failed to load courses'); }
+    } catch (err) {
+      console.error('Failed to load courses:', err);
+      setCourses([]);
+      const message = err.response?.data?.msg || err.message || 'Failed to load courses';
+      toast.error(message);
+    }
   };
+
 
   const loadProgress = async () => {
     try {
@@ -587,6 +593,13 @@ export default function ApplicationForm() {
                   <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
                     Select the program you wish to apply for
                   </Typography>
+                  {courses.length === 0 && (
+                    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="caption" color="error">Unable to load courses.</Typography>
+                      <Button size="small" onClick={loadCourses}>Retry</Button>
+                      <Typography variant="caption" color="text.secondary">If the problem persists, ensure the backend is running and CORS is configured correctly.</Typography>
+                    </Box>
+                  )}
                 </Grid>
               </Grid>
             </Box>
